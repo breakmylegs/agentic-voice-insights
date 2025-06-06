@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nova Sonic Test</title>
+</head>
+<body>
+  <h2>Nova Sonic Test Page</h2>
+  <button id="startBtn">Launch the demo</button>
+
+  <script>
+    const btn = document.getElementById("startBtn");
+
+    btn.onclick = () => {
+      const socket = new WebSocket("ws://localhost:8000/stream");
+
+      socket.binaryType = "arraybuffer";
+
+      socket.onopen = () => {
+        console.log("✅ WebSocket connected");
+      };
+
+      socket.onmessage = (event) => {
+        console.log("🔊 Received audio chunk");
+
+        const audioBlob = new Blob([event.data], { type: "audio/wav" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      socket.onclose = () => {
+        console.log("WebSocket closed");
+      };
+    };
+  </script>
+</body>
+</html>
