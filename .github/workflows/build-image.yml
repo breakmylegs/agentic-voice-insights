@@ -1,0 +1,26 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build -t agentic-nova-sonic-backend .
+      
+      - name: Save image as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image-tar
+          path: |
+            ./agentic-nova-sonic-backend.tar
+      - name: Save Docker image to tarball
+        run: docker save agentic-nova-sonic-backend > agentic-nova-sonic-backend.tar
